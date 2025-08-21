@@ -7,6 +7,9 @@ Daily fixings `Open/High/Low/Close/Volume`.
 
 `localhost:5000`
 
+- use `data_push` to load and save data into `db`
+- `entry` and `close` entrypoints queries the data from source if missing
+
 
 # DB
 

@@ -1,5 +1,9 @@
 import datetime as dt
+
+import httpx
 from aiohttp import web
+
+from data_push import update_internal
 from service_constants import port_number
 from db_def import fixings_table_name
 from db_stuff import get_ticker, get_date, get_entry, get_all, get_entry_attribute
@@ -33,6 +37,16 @@ async def handle_entry(request):
     date_value = dt.datetime.strptime(date_str, '%Y-%m-%d').date()
     async with pool.acquire() as connection:
         rep = await get_entry(conn=connection, table_name=fixings_table_name, ticker=ticker_value, date=date_value)
+        if len(rep) == 0:
+            try:
+                await update_internal(conn=connection, ticker=ticker_value, date_from=date_value, date_to=date_value)
+            except httpx.HTTPStatusError as e:
+                return web.Response(text=f"No entry found {e}")
+            rep = await get_entry(
+                conn=connection, table_name=fixings_table_name, ticker=ticker_value, date=date_value,
+            )
+            if len(rep) == 0:
+                return web.Response(text="No entry found")
         # rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in rep)])
         rep_text_entry = "\n".join(f"{u}:\t{v}" for u, v in rep[0].items())
         return web.Response(text=rep_text_entry)
@@ -47,6 +61,16 @@ async def handle_entry_close(request):
         rep = await get_entry_attribute(
             conn=connection, table_name=fixings_table_name, ticker=ticker_value, date=date_value, attribute='close',
         )
+        if len(rep) == 0:
+            try:
+                await update_internal(conn=connection, ticker=ticker_value, date_from=date_value, date_to=date_value)
+            except httpx.HTTPStatusError as e:
+                return web.Response(text=f"No entry found {e}")
+            rep = await get_entry_attribute(
+                conn=connection, table_name=fixings_table_name, ticker=ticker_value, date=date_value, attribute='close',
+            )
+            if len(rep) == 0:
+                return web.Response(text="No entry found")
         # rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in rep)])
         rep_value = f"{rep[0]['close']:.2f}"
         return web.Response(text=rep_value)
