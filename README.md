@@ -24,13 +24,13 @@ postgresql
 
 Run `service.bat` locally. (put it in startup folder if needed)
 
-Alternatively, set up a docker-compose file (overkill for the current use).
+Alternatively, set up a `docker-compose` file (overkill for the current use).
 
 This project has the full setup with `docker` (different topic): [uscis-github](https://github.com/FrenchCommando/uscis-status)
 
 
 # Source
 
-`thetadata`: need to run a `.jar` locally 
+`thetadata`: need to run a `.jar` locally (EOD data is free - no need subscription) 
 
-`yfinance`: everyone uses it although it's not perfect
+(deprecated) `yfinance`: everyone uses it, although it's not perfect

@@ -1,16 +1,12 @@
 import datetime as dt
 import asyncio
-
 import asyncpg
-
-from data_source import load_thetadata, load_yf
-from db_main import get_all_main
+from data_source import load_thetadata
 from db_constants import fixings_table_name, fixings_database
 from db_stuff import connect_to_database, insert_entry, get_ticker
 
 
 async def update_internal(conn, ticker, date_from, date_to):
-    # out_data = load_yf(ticker=ticker, date_from=date_from, date_to=date_to)
     out_data = load_thetadata(ticker=ticker, date_from=date_from, date_to=date_to)
     for line in out_data:
         print(line)

@@ -1,27 +1,7 @@
 import datetime as dt
+import httpx
 import json
 
-import httpx
-import yfinance as yf
-
-
-yf_columns = ["Date", "Open", "High", "Low", "Close", "Volume"]
-
-
-def load_yf(ticker, date_from, date_to):
-    if ticker == "SPX":
-        ticker = f"^{ticker}"
-    date_to = date_to + dt.timedelta(days=1)
-    if date_from == date_to:
-        raise Exception("date_to and date_from must be different")
-    # yf doesn't know how to handle single dates
-    # $AAPL: possibly delisted; no price data found  (1d 2025-08-04 -> 2025-08-04)
-    ticker = yf.Ticker(ticker)
-    historical_data = ticker.history(start=date_from, end=date_to)
-    # print(historical_data)
-    historical_data["Date"] = historical_data.index.date
-    # print(historical_data)
-    return historical_data[yf_columns].to_dict(orient='records')
 
 
 BASE_URL_v3 = "http://localhost:25503/v3"
@@ -58,10 +38,8 @@ def main():
     ticker_main = "AAPL"
     start_date = dt.date(2025, 8, 18)
     end_date = dt.date(2025, 8, 19)
-    out_main = load_yf(ticker=ticker_main, date_from=start_date, date_to=end_date)
-    out_main2 = load_thetadata(ticker=ticker_main, date_from=start_date, date_to=end_date)
+    out_main = load_thetadata(ticker=ticker_main, date_from=start_date, date_to=end_date)
     print(out_main)
-    print(out_main2)
 
 
 if __name__ == '__main__':
