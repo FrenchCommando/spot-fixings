@@ -10,12 +10,22 @@ from db_stuff import get_ticker, get_date, get_entry, get_all, get_entry_attribu
 from db_main import get_pool
 
 
+def rep_line_format(rep0):
+    keys_format = dict(open=".2f", low=".2f", high=".2f", close=".2f", volume="f")
+    return ",\t".join(f"{u}:\t{v:{keys_format.get(u, "")}}" for u, v in rep0.items())
+
+
+def rep_to_txt(rep):
+    rep_text = "\n".join([str(len(rep)), "\n".join(rep_line_format(rep0=rep0) for rep0 in rep)])
+    return rep_text
+
+
 async def handle_ticker(request):
     pool = request.app['pool']
     ticker_value = request.match_info.get('ticker', '')
     async with pool.acquire() as connection:
         rep = await get_ticker(conn=connection, table_name=fixings_table_name, ticker=ticker_value)
-        rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in rep)])
+        rep_text = rep_to_txt(rep=rep)
         return web.Response(text=rep_text)
 
 
@@ -26,7 +36,7 @@ async def handle_date(request):
     # print(date_value, type(date_value))
     async with pool.acquire() as connection:
         rep = await get_date(conn=connection, table_name=fixings_table_name, date=date_value)
-        rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in rep)])
+        rep_text = rep_to_txt(rep=rep)
         return web.Response(text=rep_text)
 
 
