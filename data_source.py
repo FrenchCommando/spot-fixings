@@ -12,6 +12,11 @@ def load_thetadata(ticker, date_from, date_to):
     # http://localhost:25503/v3/stock/history/eod?symbol=AAPL&start_date=20240101&end_date=20240131
     # http://localhost:25503/v3/stock/history/eod?symbol=AAPL&start_date=20240101&end_date=20240131&format=json
     url = BASE_URL_v3 + '/stock/history/eod'
+
+    if ticker in ["SPX", "VIX", "RUT", "DJX"]:
+        # http://localhost:25503/v3/index/history/eod?symbol=DJX&start_date=20250808&end_date=20250808&format=json
+        url = BASE_URL_v3 + '/index/history/eod'  # no volume
+
     params = {
         'symbol': f'{ticker}',
         'start_date': f'{date_from:{date_format}}', 'end_date': f'{date_to:{date_format}}',
