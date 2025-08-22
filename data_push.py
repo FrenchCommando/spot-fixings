@@ -37,9 +37,9 @@ async def show_ticker(ticker):
 
 
 if __name__ == '__main__':
-    ticker_main = "AMZN"
-    start = dt.date(2025, 8, 2)
-    end = dt.date(2025, 8, 19)
+    ticker_main = "VIX"
+    start = dt.date(2024, 9, 1)
+    end = dt.date(2025, 8, 21)
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

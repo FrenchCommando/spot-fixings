@@ -46,6 +46,9 @@ def main():
     out_main = load_thetadata(ticker=ticker_main, date_from=start_date, date_to=end_date)
     print(out_main)
 
+    # ERROR: Internal server error: Too many days between start and end date; max 365 days allowed
+    # ERROR: Internal server error: EOD is not available for the current day
+
 
 if __name__ == '__main__':
     main()
