@@ -1,3 +1,3 @@
 cd %USERPROFILE%\spot-fixings
-call venv\Scripts\python -m service
+call .venv\Scripts\python -m service
 pause
