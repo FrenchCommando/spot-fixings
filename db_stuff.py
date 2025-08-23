@@ -62,6 +62,11 @@ async def get_entry(conn: asyncpg.Connection, table_name: str, ticker: str, date
     )
 
 
+async def get_list(conn: asyncpg.Connection, table_name: str, column_str: str):
+    # DISTINCT for unique keys
+    return await conn.fetch(f'SELECT DISTINCT {column_str} FROM {table_name};')
+
+
 async def get_entry_attribute(conn: asyncpg.Connection, table_name: str, ticker: str, date: dt.date, attribute: str):
     return await conn.fetch(
         f'SELECT {attribute} FROM {table_name} WHERE ticker = $1 AND date = $2;', ticker, date,

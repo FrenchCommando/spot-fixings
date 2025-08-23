@@ -6,7 +6,7 @@ from aiohttp import web
 from data_push import update_internal
 from service_constants import port_number
 from db_def import fixings_table_name
-from db_stuff import get_ticker, get_date, get_entry, get_all, get_entry_attribute
+from db_stuff import get_ticker, get_date, get_entry, get_all, get_entry_attribute, get_list
 from db_main import get_pool
 
 
@@ -86,6 +86,22 @@ async def handle_entry_close(request):
         return web.Response(text=rep_value)
 
 
+async def handle_all_tickers(request):
+    pool = request.app['pool']
+    async with pool.acquire() as connection:
+        rep = await get_list(conn=connection, table_name=fixings_table_name, column_str='ticker')
+        rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in sorted(v['ticker'] for v in rep))])
+        return web.Response(text=rep_text)
+
+
+async def handle_all_dates(request):
+    pool = request.app['pool']
+    async with pool.acquire() as connection:
+        rep = await get_list(conn=connection, table_name=fixings_table_name, column_str='date')
+        rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in sorted(v['date'] for v in rep))])
+        return web.Response(text=rep_text)
+
+
 async def handle_all(request):
     pool = request.app['pool']
     async with pool.acquire() as connection:
@@ -112,6 +128,8 @@ def init_app():
     app_inst.router.add_route('GET', '/ticker/{ticker}', handle_ticker)
     app_inst.router.add_route('GET', '/date/{date}', handle_date)
     app_inst.router.add_route('GET', '/all', handle_all)
+    app_inst.router.add_route('GET', '/tickers', handle_all_tickers)
+    app_inst.router.add_route('GET', '/dates', handle_all_dates)
     app_inst.router.add_route('GET', '/', handle_all)
     return app_inst
 
