@@ -22,7 +22,7 @@ postgresql
 
 # Infra
 
-Run `service.bat` locally. (put it in startup folder if needed)
+Run `service.bat`/`thetaservice.bat` locally. (put it in startup folder if needed)
 
 Alternatively, set up a `docker-compose` file (overkill for the current use).
 
