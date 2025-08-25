@@ -118,6 +118,15 @@ async def handle_all(request):
         return web.Response(text=rep_text)
 
 
+async def index_handler(request):
+    try:
+        with open('index.html', 'r') as f:
+            html_content = f.read()
+        return web.Response(text=html_content, content_type='text/html')
+    except FileNotFoundError:
+        return web.Response(text="<h1>404: Not Found</h1>", status=404, content_type='text/html')
+
+
 async def create_db_pool(app_inst):
     app_inst['pool'] = await get_pool()
 
@@ -139,6 +148,7 @@ def init_app():
     app_inst.router.add_route('GET', '/all', handle_all)
     app_inst.router.add_route('GET', '/tickers', handle_all_tickers)
     app_inst.router.add_route('GET', '/dates', handle_all_dates)
+    app_inst.router.add_route('GET', '/html', index_handler)
     app_inst.router.add_route('GET', '/', handle_all)
     return app_inst
 
