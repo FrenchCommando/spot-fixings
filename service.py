@@ -149,7 +149,7 @@ def init_app():
     app_inst.router.add_route('GET', '/tickers', handle_all_tickers)
     app_inst.router.add_route('GET', '/dates', handle_all_dates)
     app_inst.router.add_route('GET', '/html', index_handler)
-    app_inst.router.add_route('GET', '/', handle_all)
+    app_inst.router.add_route('GET', '/', index_handler)
     return app_inst
 
 
