@@ -1,5 +1,5 @@
 import datetime as dt
-
+import os
 import httpx
 from aiohttp import web
 
@@ -8,6 +8,9 @@ from service_constants import port_number
 from db_def import fixings_table_name
 from db_stuff import get_ticker, get_date, get_entry, get_all, get_entry_attribute, get_list
 from db_main import get_pool
+
+
+base_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def rep_line_format(rep0):
@@ -120,7 +123,7 @@ async def handle_all(request):
 
 async def index_handler(request):
     try:
-        with open('index.html', 'r') as f:
+        with open(os.path.join(base_dir, 'index.html'), 'r') as f:
             html_content = f.read()
         return web.Response(text=html_content, content_type='text/html')
     except FileNotFoundError:

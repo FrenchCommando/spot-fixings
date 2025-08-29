@@ -1,6 +1,6 @@
 import asyncpg
 import datetime as dt
-from db_constants import fixings_database, fixings_table_name, error_table_name, host, pg_port_number
+from db_constants import host, pg_port_number
 from db_secrets import postgres_user, postgres_password
 from db_def import table_to_specs
 
