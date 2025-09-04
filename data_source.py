@@ -29,6 +29,8 @@ def load_thetadata(ticker, date_from, date_to):
     data = response.text
     out_data = []
     for line in data.splitlines():
+        if not line:
+            continue
         d_line = json.loads(line)
         d = dict(
             Date=dt.datetime.strptime(d_line["created"], "%Y-%m-%dT%H:%M:%S.%f").date(),
