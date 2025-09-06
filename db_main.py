@@ -35,7 +35,7 @@ def main():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(get_all_main())
-    loop.run_until_complete(clear_fixings_table(drop=False))
+    loop.run_until_complete(clear_fixings_table(drop=True))
     loop.run_until_complete(get_all_main())
 
 

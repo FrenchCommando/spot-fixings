@@ -1,5 +1,8 @@
 import datetime as dt
+import json
 import os
+from decimal import Decimal
+
 import httpx
 from aiohttp import web
 
@@ -63,6 +66,42 @@ async def handle_entry(request):
         # rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in rep)])
         rep_text_entry = "\n".join(f"{u}:\t{v}" for u, v in rep[0].items())
         return web.Response(text=rep_text_entry)
+
+
+class BackUpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if type(obj) is dt.date:
+            return str(obj)
+        if type(obj) is Decimal:
+            return float(obj)
+        # try:
+        #     return super().default(obj)
+        # except TypeError as e:
+        #     print(e)
+        #     return str(obj)
+        return super().default(obj)
+
+
+async def handle_entry_json(request):
+    pool = request.app['pool']
+    ticker_value = request.match_info.get('ticker', '')
+    date_str = request.match_info.get('date', '')
+    date_value = dt.datetime.strptime(date_str, '%Y-%m-%d').date()
+    async with pool.acquire() as connection:
+        rep = await get_entry(conn=connection, table_name=fixings_table_name, ticker=ticker_value, date=date_value)
+        if len(rep) == 0:
+            try:
+                await update_internal(conn=connection, ticker=ticker_value, date_from=date_value, date_to=date_value)
+            except httpx.HTTPStatusError as e:
+                return web.Response(text=f"No entry found {e}")
+            rep = await get_entry(
+                conn=connection, table_name=fixings_table_name, ticker=ticker_value, date=date_value,
+            )
+            if len(rep) == 0:
+                return web.Response(text="No entry found")
+        # rep_text = "\n".join([str(len(rep)), "\n".join(str(u) for u in rep)])
+        rep_entry_json = json.dumps(dict(rep[0].items()), cls=BackUpEncoder)
+        return web.Response(text=rep_entry_json)
 
 
 async def handle_entry_close(request):
@@ -145,6 +184,7 @@ def init_app():
     app_inst.on_cleanup.append(close_db_pool)
     app_inst.router.add_route('GET', '/close/{ticker}/{date}', handle_entry_close)
     app_inst.router.add_route('GET', '/entry/{ticker}/{date}', handle_entry)
+    app_inst.router.add_route('GET', '/entry_json/{ticker}/{date}', handle_entry_json)
     app_inst.router.add_route('GET', '/ticker/{ticker}', handle_ticker)
     app_inst.router.add_route('GET', '/date/{date}', handle_date)
     app_inst.router.add_route('GET', '/refresh', handle_refresh)
@@ -163,4 +203,5 @@ if __name__ == "__main__":
     # http://localhost:5000/ticker/SPY
     # http://localhost:5000/date/2025-08-08
     # http://localhost:5000/entry/SPY/2025-08-08
+    # http://localhost:5000/entry_json/SPY/2025-08-08
     # http://localhost:5000/close/SPY/2025-08-08

@@ -9,7 +9,7 @@ table_to_specs = {
         "high NUMERIC(9, 2), "
         "low NUMERIC(9, 2), "
         "close NUMERIC(9, 2), "
-        "volume NUMERIC,"
+        "volume BIGINT,"
         "PRIMARY KEY (ticker, date)",
     error_table_name:
         "id serial PRIMARY KEY, "
