@@ -17,7 +17,7 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def rep_line_format(rep0):
-    keys_format = dict(open=".2f", low=".2f", high=".2f", close=".2f", volume="f")
+    keys_format = dict(open=".2f", low=".2f", high=".2f", close=".2f", volume="")
     return ",\t".join(f"{u}:\t{v:{keys_format.get(u, "")}}" for u, v in rep0.items())
 
 
