@@ -33,4 +33,4 @@ This project has the full setup with `docker` (different topic): [uscis-github](
 
 `thetadata`: need to run a `.jar` locally (EOD data is free - no need subscription) 
 
-(deprecated) `yfinance`: everyone uses it, although it's not perfect
+`yfinance`: everyone uses it, although it's not perfect -> use it for the ones `thetadata` doesn't have

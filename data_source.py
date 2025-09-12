@@ -1,6 +1,7 @@
 import datetime as dt
 import httpx
 import json
+import yfinance as yf
 
 
 
@@ -41,12 +42,45 @@ def load_thetadata(ticker, date_from, date_to):
     return out_data
 
 
+yf_mapping = dict(
+    NDX="^NDX",
+)
+
+
+def load_yf(ticker, date_from, date_to):
+    yf_ticker = yf_mapping.get(ticker, ticker)
+    ticker_obj = yf.Ticker(yf_ticker)
+    historical_data = ticker_obj.history(start=date_from, end=date_to + dt.timedelta(days=1))
+    out_data = []
+    for line in historical_data.iterrows():
+        d_date, d_line = line
+        d = dict(
+            Date=d_date.date(),
+            Open=d_line["Open"], High=d_line["High"], Low=d_line["Low"], Close=d_line["Close"],
+            Volume=d_line["Volume"],
+        )
+        out_data.append(d)
+
+    return out_data
+
+
+def load_fixings(ticker, date_from, date_to):
+    if ticker in yf_mapping:
+        return load_yf(ticker=ticker, date_from=date_from, date_to=date_to)
+    else:
+        return load_thetadata(ticker=ticker, date_from=date_from, date_to=date_to)
+
+
 def main():
     ticker_main = "AAPL"
     start_date = dt.date(2025, 8, 18)
     end_date = dt.date(2025, 8, 19)
     out_main = load_thetadata(ticker=ticker_main, date_from=start_date, date_to=end_date)
+    out_main_yf = load_yf(ticker=ticker_main, date_from=start_date, date_to=end_date)
+    out_main0 = load_fixings(ticker=ticker_main, date_from=start_date, date_to=end_date)
     print(out_main)
+    print(out_main_yf)
+    print(out_main0)
 
     # ERROR: Internal server error: Too many days between start and end date; max 365 days allowed
     # ERROR: Internal server error: EOD is not available for the current day

@@ -1,13 +1,13 @@
 import datetime as dt
 import asyncio
 import asyncpg
-from data_source import load_thetadata
+from data_source import load_fixings
 from db_constants import fixings_table_name, fixings_database
 from db_stuff import connect_to_database, insert_entry, get_ticker, get_list
 
 
 async def update_internal(conn, ticker, date_from, date_to):
-    out_data = load_thetadata(ticker=ticker, date_from=date_from, date_to=date_to)
+    out_data = load_fixings(ticker=ticker, date_from=date_from, date_to=date_to)
     for line in out_data:
         print(line)
         try:
