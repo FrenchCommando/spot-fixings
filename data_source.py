@@ -33,18 +33,20 @@ def load_thetadata(ticker, date_from, date_to):
         if not line:
             continue
         d_line = json.loads(line)
+        # print(d_line)
         d = dict(
-            Date=dt.datetime.strptime(d_line["created"], "%Y-%m-%dT%H:%M:%S.%f").date(),
+            Date=dt.datetime.strptime(d_line["created"].split(".", 1)[0], "%Y-%m-%dT%H:%M:%S").date(),
             Open=d_line["open"], High=d_line["high"], Low=d_line["low"], Close=d_line["close"],
             Volume=d_line["volume"],
         )
+        # print(d)
         out_data.append(d)
     return out_data
 
 
 yf_mapping = dict(
     NDX="^NDX",
-)
+)  # mapping means override - don't add SPX
 
 
 def load_yf(ticker, date_from, date_to):
@@ -72,9 +74,9 @@ def load_fixings(ticker, date_from, date_to):
 
 
 def main():
-    ticker_main = "AAPL"
-    start_date = dt.date(2025, 8, 18)
-    end_date = dt.date(2025, 8, 19)
+    ticker_main = "SPX"
+    start_date = dt.date(2024, 2, 7)
+    end_date = dt.date(2024, 2, 10)
     out_main = load_thetadata(ticker=ticker_main, date_from=start_date, date_to=end_date)
     out_main_yf = load_yf(ticker=ticker_main, date_from=start_date, date_to=end_date)
     out_main0 = load_fixings(ticker=ticker_main, date_from=start_date, date_to=end_date)
